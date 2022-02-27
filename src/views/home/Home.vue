@@ -3,16 +3,17 @@
     <nav-bar class="nav-bar">
       <div slot="center">购物街</div>
     </nav-bar>
-    <div>
+    <back-top v-show="isshow" ></back-top>
+    <div id="ceshi">
       <home-swiper :banners="banners" ref="hSwiper"></home-swiper>
     </div>
     <recommend-view :recommends="recommends"></recommend-view>
     <feature-view></feature-view>
-    <tab-control :titles="['流行', '新款', '精选']"
-                  
-                  @tabclick="tabclick"></tab-control>
-    <goods-list :goods="goods.pop.list"></goods-list>
-    
+    <tab-control
+      :titles="['流行', '新款', '精选']"
+      @tabclick="tabclick"
+    ></tab-control>
+    <goods-list :goods="goods[currentType].list"></goods-list>
   </div>
 </template>
 
@@ -23,6 +24,7 @@ import RecommendView from "./childComps/RecommendView.vue";
 import FeatureView from "./childComps/FeatureView.vue";
 import TabControl from "../../components/content/tabControl/TabControl";
 import GoodsList from "../../components/content/goods/GoodsList.vue";
+import BackTop from "content/backTop/BackTop"
 
 import {
   getHomeMultidata,
@@ -39,7 +41,8 @@ export default {
     RecommendView,
     FeatureView,
     TabControl,
-    GoodsList
+    GoodsList,
+    BackTop
   },
   data() {
     return {
@@ -50,9 +53,17 @@ export default {
         new: { page: 0, list: [] },
         sell: { page: 0, list: [] },
       },
+      currentType:'pop',
+      isshow:"false"
     };
   },
+mounted(){
+    document.addEventListener('scroll',function(){  
+      console.log(window.pageYOffset);
+      this.isshow = window.pageYOffset >1000
+    })
 
+  },
   created() {
     this.getHomeMultidata(), 
     this.getHomeGoods('pop'),
@@ -60,9 +71,23 @@ export default {
     this.getHomeGoods('sell');
   },
   methods: {
+     backshow(){ },
+
 /*数据请求*/
 tabclick(index){
-console.log(index);
+switch(index){
+  case 0:
+  this.currentType = 'pop'
+  break
+  case 1:
+  this.currentType = 'new'
+  break
+  case 2:
+  this.currentType = 'sell'
+  break
+
+
+}
 },
 
     /*网络请求*/
